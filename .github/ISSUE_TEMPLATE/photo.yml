@@ -1,0 +1,24 @@
+name: 📸 공유 갤러리에 사진 올리기
+description: 사진을 제보하면 관리자 승인 후 갤러리에 올라가요!
+title: "[사진] "
+labels: ["photo-submission"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        🍩 **도넛픽 공유 갤러리**에 사진을 올려 주셔서 감사해요!
+        아래 칸에 이미지를 **드래그하거나 붙여넣기** 하면 자동으로 업로드됩니다.
+        관리자가 승인하면 [갤러리](https://aisays.github.io)에 나타나요.
+  - type: textarea
+    id: photos
+    attributes:
+      label: 사진
+      description: 이 칸에 이미지를 드래그하세요 (여러 장 가능)
+      placeholder: 여기에 이미지를 드래그! 업로드가 끝날 때까지 잠시 기다렸다가 제출해 주세요.
+    validations:
+      required: true
+  - type: input
+    id: comment
+    attributes:
+      label: 한마디 (선택)
+      placeholder: 사진 소개나 하고 싶은 말

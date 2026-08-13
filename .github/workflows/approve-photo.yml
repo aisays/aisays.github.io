@@ -1,0 +1,57 @@
+name: 사진 승인 → 갤러리 추가
+
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  add-to-gallery:
+    if: github.event.label.name == 'approved' && contains(github.event.issue.labels.*.name, 'photo-submission')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 이슈에서 이미지 내려받아 커밋
+        env:
+          BODY: ${{ github.event.issue.body }}
+          NUM: ${{ github.event.issue.number }}
+          USER: ${{ github.event.issue.user.login }}
+        run: |
+          mkdir -p img
+          urls=$(printf '%s' "$BODY" | grep -oE 'https://(github\.com/user-attachments/assets/[A-Za-z0-9-]+|user-images\.githubusercontent\.com/[^ )">]+)' | sort -u)
+          if [ -z "$urls" ]; then
+            echo "이미지 링크를 찾지 못했습니다."
+            exit 0
+          fi
+          i=0
+          for u in $urls; do
+            i=$((i+1))
+            tmp=$(mktemp)
+            curl -sL "$u" -o "$tmp"
+            type=$(file -b --mime-type "$tmp")
+            case "$type" in
+              image/jpeg) ext=jpg ;;
+              image/png)  ext=png ;;
+              image/gif)  ext=gif ;;
+              image/webp) ext=webp ;;
+              *) rm -f "$tmp"; continue ;;
+            esac
+            mv "$tmp" "img/$(date +%Y%m%d%H%M%S)-guest${NUM}-${i}.${ext}"
+          done
+          git config user.name "donutpic-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add img
+          git diff --cached --quiet && { echo "추가할 이미지 없음"; exit 0; }
+          git commit -m "공유 갤러리: @${USER} 님의 사진 추가 (#${NUM})"
+          git push
+
+      - name: 감사 댓글 달고 이슈 닫기
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue comment "${{ github.event.issue.number }}" --repo "${{ github.repository }}" \
+            --body "📸 사진이 갤러리에 추가되었어요! 감사합니다 🍩 → https://aisays.github.io (반영까지 1~2분)"
+          gh issue close "${{ github.event.issue.number }}" --repo "${{ github.repository }}"
