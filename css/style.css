@@ -393,6 +393,22 @@ h1, h2, h3, .nav-logo, .btn { font-family: 'Jua', sans-serif; }
 
 .modal-body { white-space: pre-line; line-height: 1.7; }
 
+/* ===== 방명록 / 댓글 ===== */
+.giscus-card {
+  background: #fff;
+  border: var(--outline);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+}
+
+.modal-comments-title {
+  font-size: 1.3rem;
+  margin: 2rem 0 0.8rem;
+  padding-top: 1.2rem;
+  border-top: 3px dashed var(--ink);
+}
+
 /* ===== 푸터 ===== */
 .footer {
   position: relative;

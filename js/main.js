@@ -42,6 +42,42 @@ PROJECTS.forEach(p => {
   projectGrid.appendChild(card);
 });
 
+// ===== giscus 댓글 (GitHub Discussions) =====
+const GISCUS = {
+  repo: "aisays/aisays.github.io",
+  repoId: "R_kgDOT3nLrw",
+  category: "Announcements",
+  categoryId: "DIC_kwDOT3nLr84DDTo7"
+};
+
+// container 안에 giscus 댓글창을 만든다. term = 글 제목 (글마다 별도 스레드)
+function loadGiscus(container, term) {
+  container.innerHTML = "";
+  const s = document.createElement("script");
+  s.src = "https://giscus.app/client.js";
+  s.async = true;
+  s.crossOrigin = "anonymous";
+  const attrs = {
+    "data-repo": GISCUS.repo,
+    "data-repo-id": GISCUS.repoId,
+    "data-category": GISCUS.category,
+    "data-category-id": GISCUS.categoryId,
+    "data-mapping": "specific",
+    "data-term": term,
+    "data-strict": "0",
+    "data-reactions-enabled": "1",
+    "data-emit-metadata": "0",
+    "data-input-position": "top",
+    "data-theme": "light",
+    "data-lang": "ko"
+  };
+  for (const [k, v] of Object.entries(attrs)) s.setAttribute(k, v);
+  container.appendChild(s);
+}
+
+// 방명록
+loadGiscus(document.getElementById("guestbook-box"), "📖 방명록");
+
 // 글 읽기 모달
 const modal = document.getElementById("post-modal");
 
@@ -50,6 +86,7 @@ function openPost(i) {
   document.getElementById("modal-date").textContent = `📅 ${post.date}`;
   document.getElementById("modal-title").textContent = `${post.emoji} ${post.title}`;
   document.getElementById("modal-body").textContent = post.content;
+  loadGiscus(document.getElementById("modal-comments"), post.title);
   modal.hidden = false;
   document.body.style.overflow = "hidden";
 }
