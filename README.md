@@ -1,35 +1,39 @@
-# 🍩 나의 스프링필드
+# 🍩 도넛픽 (DonutPic)
 
-심슨 감성의 컬러풀한 카툰 테마 블로그 & 프로젝트 페이지입니다.
+GitHub Pages + GitHub API로 만든 **서버 없는 이미지 호스팅 서비스**입니다.
 
-## 📝 글/프로젝트 추가하는 법
+**👉 https://aisays.github.io**
 
-`js/data.js` 파일 하나만 수정하면 됩니다.
+## 동작 원리
 
-- **블로그 글 추가**: `POSTS` 목록 맨 위에 새 항목을 복사해서 붙여넣고 내용을 바꾸세요.
-- **프로젝트 추가**: `PROJECTS` 목록에 새 항목을 추가하세요. `status`는 `"done"`(완성) 또는 `"wip"`(진행 중).
+- **업로드**: 브라우저에서 GitHub API로 `img/` 폴더에 이미지를 직접 커밋
+- **갤러리**: GitHub API로 `img/` 폴더 목록을 읽어서 표시
+- **호스팅 주소**: 업로드된 이미지는 `https://aisays.github.io/img/파일명` 으로 어디서든 사용 가능
+- 큰 사진은 업로드 전에 브라우저에서 자동으로 리사이즈 (긴 변 1600px, JPEG 85%)
 
-## 🚀 GitHub Pages에 올리는 법
+## 업로드 권한 (관리자 토큰)
 
-1. [GitHub](https://github.com)에서 새 저장소(repository)를 만듭니다.
-   - 저장소 이름을 `아이디.github.io`로 만들면 주소가 `https://아이디.github.io`가 됩니다.
-2. 이 폴더의 파일을 전부 올립니다:
-   ```
-   git init
-   git add .
-   git commit -m "첫 커밋: 심슨 테마 블로그"
-   git branch -M main
-   git remote add origin https://github.com/아이디/저장소이름.git
-   git push -u origin main
-   ```
-3. 저장소의 **Settings → Pages**에서 Branch를 `main`으로 선택하고 Save.
-4. 1~2분 뒤 `https://아이디.github.io/저장소이름` 으로 접속하면 완성! 🎉
+업로드는 GitHub Fine-grained 토큰을 등록한 브라우저에서만 가능합니다.
 
-## 📁 파일 구성
+1. GitHub → Settings → **Developer settings** → **Fine-grained personal access tokens** → Generate new token
+2. Repository access: **Only select repositories** → `aisays.github.io` 선택
+3. Permissions → Repository permissions → **Contents: Read and write**
+4. 생성된 `github_pat_...` 토큰 복사
+5. 사이트 우측 상단 **🔑 관리자** 버튼 → 토큰 붙여넣기 → 저장
+
+토큰은 브라우저(localStorage)에만 저장되며 저장소 코드에는 포함되지 않습니다.
+
+## 한계
+
+- 파일 하나 최대 100MB, 저장소 전체 1GB 권장
+- 방문자가 아주 많으면 GitHub API 목록 조회 제한(시간당 60회/IP)에 걸릴 수 있음
+- 업로드 직후 `aisays.github.io` 주소 반영까지 1분 정도 걸림
+
+## 파일 구성
 
 | 파일 | 역할 |
 |---|---|
-| `index.html` | 페이지 구조 (이름/소개 수정은 여기 ABOUT 부분) |
-| `css/style.css` | 디자인 (색을 바꾸려면 맨 위 `:root` 부분) |
-| `js/data.js` | ✏️ **글과 프로젝트 데이터 — 주로 여기를 수정!** |
-| `js/main.js` | 카드를 화면에 그려주는 코드 (수정 불필요) |
+| `index.html` | 페이지 구조 (업로드 존, 갤러리, 모달) |
+| `css/style.css` | 카툰 테마 디자인 |
+| `js/app.js` | 업로드/갤러리/삭제 로직 (저장소 이름 바꾸면 맨 위 상수 수정) |
+| `img/` | 업로드된 이미지가 저장되는 곳 |
